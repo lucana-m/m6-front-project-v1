@@ -1,5 +1,6 @@
 import { LandingPageBox } from "./styles";
 import { NotebookIcon } from "./styles";
+import { Link } from "react-router-dom";
 
 export const LandingPage = () => {
   return (
@@ -11,8 +12,13 @@ export const LandingPage = () => {
             <h2>MyNoteBook</h2>
           </div>
           <div className="bottomBox">
-            <button>Cadastrar</button>
-            <button>Login</button>
+            <button>
+              <Link to="/register">Cadastrar</Link>
+            </button>
+
+            <button>
+              <Link to="/login">Login</Link>
+            </button>
           </div>
         </div>
       </LandingPageBox>
