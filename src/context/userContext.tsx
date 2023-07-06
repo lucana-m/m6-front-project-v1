@@ -4,6 +4,7 @@ import { RegisterUserData, UserLogin } from "../schemas/userSchemas";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
+import { UpdateUserRequest } from "../schemas/userSchemas";
 
 interface UserProviderChildren {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ interface User {
   id: number;
   name: string;
   email: string;
+  phone: string;
 }
 
 interface Contact {
@@ -40,6 +42,10 @@ interface UserProviderValue {
   login: (data: UserLogin) => Promise<void>;
   userContacts: Contact[];
   getUserContacts: (id: string) => Promise<void>;
+  updateUser: (content: UpdateUserRequest) => Promise<void>;
+  openModal: boolean;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  logout: () => void;
 }
 
 export const UserContext = createContext({} as UserProviderValue);
@@ -48,6 +54,7 @@ export const UserProvider = ({ children }: UserProviderChildren) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [userContacts, setUserContacts] = useState<Contact[]>([]);
+  const [openModal, setOpenModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -97,6 +104,7 @@ export const UserProvider = ({ children }: UserProviderChildren) => {
         id: authenticatedUser.id,
         name: authenticatedUser.name,
         email: authenticatedUser.email,
+        phone: authenticatedUser.phone,
       };
 
       setUser(userObj);
@@ -110,6 +118,23 @@ export const UserProvider = ({ children }: UserProviderChildren) => {
       setLoading(false);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("@TOKEN");
+    localStorage.removeItem("@USER");
+    navigate("/");
+  };
+
+  const updateUser = async (content: UpdateUserRequest) => {
+    try {
+      const { data } = await api.patch(`/users/${user?.id}`, content);
+      const newData = { ...user, ...data };
+      setUser(newData);
+      setOpenModal(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -144,6 +169,10 @@ export const UserProvider = ({ children }: UserProviderChildren) => {
         loading,
         userContacts,
         getUserContacts,
+        updateUser,
+        openModal,
+        setOpenModal,
+        logout,
       }}
     >
       {children}

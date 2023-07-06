@@ -28,3 +28,11 @@ export const userLoginSchema = z.object({
 });
 
 export type UserLogin = z.infer<typeof userLoginSchema>;
+
+export const updateUserSchema = z.object({
+  name: z.string().nonempty("Campo obrigatório"),
+  email: z.string().email("Email inválido").nonempty("Campo obrigatório"),
+  phone: z.string().nonempty("Campo obrigatório"),
+});
+
+export type UpdateUserRequest = z.infer<typeof updateUserSchema>;
