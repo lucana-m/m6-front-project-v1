@@ -49,6 +49,7 @@ export const GlobalStyle = createGlobalStyle`
         cursor: pointer;
         border: none;
         background: transparent;
+        font-family: 'Arya', sans-serif;
     }
 
     a{
